@@ -59,6 +59,27 @@ app.get('/todos/:id', (req, res) => {
     .catch(error => console.log(error))
 })
 
+app.get('/todos/:id/edit', (req, res) => {
+  const id = req.params.id
+  Todo.findById(id)
+    .lean() // 撈資料想用 res.render()，就要先用 .lean()
+    .then(todo => res.render('edit', { todo }))
+    .catch(error => console.log(error))
+})
+
+app.post('/todos/:id/edit', (req, res) => {
+  const id = req.params.id
+  const name = req.body.name
+  
+  return Todo.findById(id)
+    .then(todo => {
+      todo.name = name
+      return todo.save()
+    })
+    .then(() => res.redirect(`/todos/${id}`))
+    .catch(error => console.log(error))
+})
+
 // 設定 port 3000
 app.listen(3000, () => {
   console.log('App is running on http://localhost:3000')
