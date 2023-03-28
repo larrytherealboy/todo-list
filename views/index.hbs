@@ -1,11 +1,12 @@
-<a href="./todos/new">Create</a>
+<a href="/todos/new">Create</a>
 
 <ul>
   {{#each todos}}
   <li>
+    <input type="checkbox" name="isDone" {{#if this.isDone}} checked {{/if}} disabled>
     {{ this.name }}
-    <a href="./todos/{{ this._id }}">detail</a>
-    <a href="./todos/{{ this._id }}/edit">edit</a>
+    <a href="/todos/{{ this._id }}">detail</a>
+    <a href="/todos/{{ this._id }}/edit">edit</a>
     {{!-- a link 只能發送get請求，因此delete功能用form --}}
     <form action="/todos/{{ this._id }}/delete" method="POST" style="display: inline;">
       <button type="submit">delete</button>
