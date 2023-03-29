@@ -5,6 +5,7 @@ const app = express()
 const exhbs = require('express-handlebars')
 const mongoose = require('mongoose') // library mongoose
 const bodyPaser = require('body-parser')
+const methodOverride = require('method-override')
 
 const Todo = require('./models/todo') // 載入Todo model
 
@@ -30,9 +31,15 @@ db.once('open', () => {
 app.engine('hbs', exhbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
 
+
 app.use(bodyPaser.urlencoded({ extended: true }))
+// 設定每一筆請求都會透過 methodOverride 進行前置處理
+app.use(methodOverride('_method'))
+
 
 // 設定路由
+
+// 瀏覽所有todos
 app.get('/', (req, res) => {
   Todo.find() // 取出 Todo model 裡的所有資料
     .lean() // 把 Mongoose 的 Model 物件轉換成乾淨的 JavaScript 資料陣列（json 格式）
@@ -41,10 +48,14 @@ app.get('/', (req, res) => {
     .catch(error => console.error(error)) // 錯誤處理
 })
 
+
+// 取得新增todos表單
 app.get('/todos/new', (req, res) => {
   return res.render('new')
 })
 
+
+// 新增toods
 app.post('/todos', (req, res) => {
   const name = req.body.name // 從 req.body 拿出表單裡的 name 資料
   return Todo.create({ name }) // 存入資料庫
@@ -52,6 +63,8 @@ app.post('/todos', (req, res) => {
     .catch(error => console.log(error))
 })
 
+
+// 瀏覽特定todo
 app.get('/todos/:id', (req, res) => {
   const id = req.params.id
   Todo.findById(id)
@@ -60,6 +73,8 @@ app.get('/todos/:id', (req, res) => {
     .catch(error => console.log(error))
 })
 
+
+// 取得編輯todo表單
 app.get('/todos/:id/edit', (req, res) => {
   const id = req.params.id
   Todo.findById(id)
@@ -68,7 +83,9 @@ app.get('/todos/:id/edit', (req, res) => {
     .catch(error => console.log(error))
 })
 
-app.post('/todos/:id/edit', (req, res) => {
+
+// 修改todo
+app.put('/todos/:id', (req, res) => {
   const id = req.params.id
   const { name, isDone } = req.body
 
@@ -82,7 +99,9 @@ app.post('/todos/:id/edit', (req, res) => {
     .catch(error => console.log(error))
 })
 
-app.post('/todos/:id/delete', (req, res) => {
+
+// 刪除todo
+app.delete('/todos/:id', (req, res) => {
   const id = req.params.id
   return Todo.findById(id)
     .then(todo => todo.remove())
