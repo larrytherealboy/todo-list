@@ -5,6 +5,7 @@ const express = require('express')
 const exhbs = require('express-handlebars')
 const bodyPaser = require('body-parser')
 const methodOverride = require('method-override')
+const session = require('express-session')
 
 // 如果在 Heroku 環境則使用 process.env.PORT, 否則為本地環境，使用 3000 
 const PORT = process.env.PORT || 3000
@@ -23,6 +24,11 @@ app.set('view engine', 'hbs')
 
 
 // 設定每一筆請求都會透過 bodyPaser, methodOverride 進行前置處理
+app.use(session({
+  secret: 'ThisIsMySecret',
+  resave: false,
+  saveUninitialized: true
+}))
 app.use(bodyPaser.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 

@@ -8,7 +8,7 @@ router.get('/login', (req, res) => {
 })
 
 router.post('/login', (req, res) => {
-  
+
 })
 
 router.get('/register', (req, res) => {
@@ -18,25 +18,25 @@ router.get('/register', (req, res) => {
 router.post('/register', (req, res) => {
   const { name, email, password, confirmPassword } = req.body
   User.findOne({ email }).then(user => {
-    if(user) {
+    if (user) {
       console.log('User already exists.')
       res.render('register', {
-        name, 
-        email, 
-        password, 
+        name,
+        email,
+        password,
         confirmPassword
       })
     } else {
       return User.create({
-        name, 
+        name,
         email,
         password
       })
-      .then(() => {res.redirect('/')})
-      .catch(error => console.log(error))
+        .then(() => { res.redirect('/') })
+        .catch(error => console.log(error))
     }
   })
-  .catch(error => console.log(error))
+    .catch(error => console.log(error))
 })
 
 module.exports = router
