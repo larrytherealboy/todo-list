@@ -6,6 +6,8 @@ const exhbs = require('express-handlebars')
 const bodyPaser = require('body-parser')
 const methodOverride = require('method-override')
 const session = require('express-session')
+// 載入設定檔，要寫在 express-session 以後
+const usePassport = require('./config/passport')
 
 // 如果在 Heroku 環境則使用 process.env.PORT, 否則為本地環境，使用 3000 
 const PORT = process.env.PORT || 3000
@@ -31,6 +33,9 @@ app.use(session({
 }))
 app.use(bodyPaser.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
+
+// 呼叫 Passport 函式並傳入 app，這條要寫在路由之前
+usePassport(app)
 
 // 將 request 導入路由器
 app.use(routes)
