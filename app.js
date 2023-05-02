@@ -6,6 +6,7 @@ const exhbs = require('express-handlebars')
 const bodyPaser = require('body-parser')
 const methodOverride = require('method-override')
 const session = require('express-session')
+const flash = require('connect-flash')
 // 載入設定檔，要寫在 express-session 以後
 const usePassport = require('./config/passport')
 
@@ -27,6 +28,7 @@ app.set('view engine', 'hbs')
 // 使用 app.use 代表這組 middleware 會作用於所有的路由
 
 // 設定每一筆請求都會透過 bodyPaser, methodOverride 進行前置處理
+app.use(flash())  
 app.use(session({
   secret: 'ThisIsMySecret',
   resave: false,
@@ -43,6 +45,8 @@ usePassport(app)
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.isAuthenticated()
   res.locals.user = req.user
+  res.locals.success_msg = req.flash('success_msg')  // 設定 success_msg 訊息
+  res.locals.warning_msg = req.flash('warning_msg')  // 設定 warning_msg 訊息
   next()
 })
 
