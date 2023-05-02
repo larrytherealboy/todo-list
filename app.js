@@ -24,6 +24,7 @@ const app = express()
 app.engine('hbs', exhbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
 
+// 使用 app.use 代表這組 middleware 會作用於所有的路由
 
 // 設定每一筆請求都會透過 bodyPaser, methodOverride 進行前置處理
 app.use(session({
@@ -37,9 +38,16 @@ app.use(methodOverride('_method'))
 // 呼叫 Passport 函式並傳入 app，這條要寫在路由之前
 usePassport(app)
 
+
+// req.user 是在反序列化的時候，取出的 user 資訊，之後會放在 req.user 裡以供後續使用
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.isAuthenticated()
+  res.locals.user = req.user
+  next()
+})
+
 // 將 request 導入路由器
 app.use(routes)
-
 
 // 設定 port 3000
 app.listen(PORT, () => {

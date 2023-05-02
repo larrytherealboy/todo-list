@@ -22,11 +22,9 @@ module.exports = app => {
   }))
   // 設定序列化與反序列化
   passport.serializeUser((user, done) => {
-    console.log(user)
     done(null, user.id)
   })
   passport.deserializeUser((id, done) => {
-    console.log(id)
     User.findById(id)
       .lean()
       .then(user => done(null, user))
