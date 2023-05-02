@@ -10,8 +10,12 @@ const flash = require('connect-flash')
 // 載入設定檔，要寫在 express-session 以後
 const usePassport = require('./config/passport')
 
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
 // 如果在 Heroku 環境則使用 process.env.PORT, 否則為本地環境，使用 3000 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT
 
 // 引用路由器
 const routes = require('./routes')
@@ -30,7 +34,7 @@ app.set('view engine', 'hbs')
 // 設定每一筆請求都會透過 bodyPaser, methodOverride 進行前置處理
 app.use(flash())  
 app.use(session({
-  secret: 'ThisIsMySecret',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true
 }))
